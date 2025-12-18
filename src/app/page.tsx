@@ -112,27 +112,28 @@ export default function Home() {
       }
 
       if (result.success) {
+        const r = result as any;
         const updatedData: Partial<Account> = {
           id: account.id,
-          type: result.planName || account.type || '-',
-          credits: result.totalCredits || 0,
-          usedCredits: result.usedCredits || 0,
-          usage: result.usagePercentage || 0,
-          expiresAt: result.expiresAt || undefined,
+          type: r.planName || account.type || '-',
+          credits: r.totalCredits || 0,
+          usedCredits: r.usedCredits || 0,
+          usage: r.usagePercentage || 0,
+          expiresAt: r.expiresAt || undefined,
         };
 
         // 处理 queryAccount 返回的 newTokenData
-        if (result.newTokenData) {
-          updatedData.idToken = result.newTokenData.idToken;
-          updatedData.idTokenExpiresAt = result.newTokenData.idTokenExpiresAt;
-          updatedData.refreshToken = result.newTokenData.refreshToken;
+        if (r.newTokenData) {
+          updatedData.idToken = r.newTokenData.idToken;
+          updatedData.idTokenExpiresAt = r.newTokenData.idTokenExpiresAt;
+          updatedData.refreshToken = r.newTokenData.refreshToken;
         }
         // 处理 loginAndGetToken 直接返回的字段
-        if ((result as any).refreshToken) updatedData.refreshToken = (result as any).refreshToken;
-        if ((result as any).idToken) updatedData.idToken = (result as any).idToken;
-        if ((result as any).idTokenExpiresAt) updatedData.idTokenExpiresAt = (result as any).idTokenExpiresAt;
-        if ((result as any).apiKey) updatedData.apiKey = (result as any).apiKey;
-        if ((result as any).name) updatedData.name = (result as any).name;
+        if (r.refreshToken) updatedData.refreshToken = r.refreshToken;
+        if (r.idToken) updatedData.idToken = r.idToken;
+        if (r.idTokenExpiresAt) updatedData.idTokenExpiresAt = r.idTokenExpiresAt;
+        if (r.apiKey) updatedData.apiKey = r.apiKey;
+        if (r.name) updatedData.name = r.name;
 
         Storage.updateAccount(updatedData);
         setAccounts(Storage.getAccounts().accounts || []);
