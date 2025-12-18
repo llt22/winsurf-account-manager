@@ -2,6 +2,12 @@
 
 一个基于 Next.js 的 Windsurf 账号管理 Web 应用，支持多账号管理、积分查询、Token 刷新等功能。
 
+## 演示
+
+🔗 **在线演示**: [https://winsurf-account-manager.vercel.app/](https://winsurf-account-manager.vercel.app/)
+
+![界面截图](./img.png)
+
 ## 功能特性
 
 - **多账号管理** - 添加、编辑、删除多个 Windsurf 账号
