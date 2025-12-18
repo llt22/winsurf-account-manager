@@ -216,7 +216,6 @@ export const AccountApi = {
     }
 
     return {
-      success: true,
       ...planResult,
       newTokenData,
     };
