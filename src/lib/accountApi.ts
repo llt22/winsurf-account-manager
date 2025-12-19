@@ -200,14 +200,29 @@ export const AccountApi = {
     if (tokenExpired) {
       const refreshResult = await this.refreshToken(account.refreshToken);
       if (!refreshResult.success || !refreshResult.idToken) {
-        return { success: false, error: refreshResult.error || '刷新 Token 失败' };
+        // TOKEN_EXPIRED 时尝试重新登录
+        if (refreshResult.error?.includes('TOKEN_EXPIRED') && account.email && account.password) {
+          const loginResult = await this.login(account.email, account.password);
+          if (!loginResult.success || !loginResult.idToken) {
+            return { success: false, error: loginResult.error || '重新登录失败' };
+          }
+          accessToken = loginResult.idToken;
+          newTokenData = {
+            idToken: loginResult.idToken,
+            idTokenExpiresAt: now + (loginResult.expiresIn || 3600) * 1000,
+            refreshToken: loginResult.refreshToken,
+          };
+        } else {
+          return { success: false, error: refreshResult.error || '刷新 Token 失败' };
+        }
+      } else {
+        accessToken = refreshResult.idToken;
+        newTokenData = {
+          idToken: refreshResult.idToken,
+          idTokenExpiresAt: now + (refreshResult.expiresIn || 3600) * 1000,
+          refreshToken: refreshResult.refreshToken,
+        };
       }
-      accessToken = refreshResult.idToken;
-      newTokenData = {
-        idToken: refreshResult.idToken,
-        idTokenExpiresAt: now + (refreshResult.expiresIn || 3600) * 1000,
-        refreshToken: refreshResult.refreshToken,
-      };
     }
 
     const planResult = await this.getPlanStatus(accessToken!);
